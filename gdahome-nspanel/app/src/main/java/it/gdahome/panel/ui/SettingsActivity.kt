@@ -32,7 +32,7 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.prefs, rootKey)
 
-            val numeric = listOf("mqtt_port", "dim_after", "off_after", "brightness_active", "brightness_dim", "backlight_max")
+            val numeric = listOf("zigbee_baud", "zigbee_port", "mqtt_port", "dim_after", "off_after", "brightness_active", "brightness_dim", "backlight_max")
             numeric.forEach { key ->
                 findPreference<EditTextPreference>(key)?.setOnBindEditTextListener { it.inputType = InputType.TYPE_CLASS_NUMBER }
             }

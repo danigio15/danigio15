@@ -49,6 +49,13 @@ class Config(context: Context) {
 
     val useSu get() = bool("use_su", true)
 
+    // Zigbee integrato → rete (per Zigbee2MQTT / ZHA)
+    val zigbeeEnabled get() = bool("zigbee_enabled", false)
+    val zigbeeDevice get() = str("zigbee_device")
+    val zigbeeBaud get() = int("zigbee_baud", 115200)
+    val zigbeePort get() = int("zigbee_port", 6638)
+    val zigbeeRtsCts get() = bool("zigbee_rtscts", false)
+
     // Schermo
     val dimAfterSec get() = int("dim_after", 60)
     val offAfterSec get() = int("off_after", 300)

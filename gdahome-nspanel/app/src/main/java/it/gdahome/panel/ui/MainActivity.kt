@@ -232,9 +232,11 @@ class MainActivity : AppCompatActivity() {
         val parts = mutableListOf<String>()
         if (s.haConfigured) parts += if (s.haConnected) "HA ●" else "HA ○"
         if (s.mqttConfigured) parts += if (s.mqttConnected) "MQTT ●" else "MQTT ○"
+        if (s.zigbeeEnabled) parts += if (s.zigbeeRunning) "ZB ●" else "ZB ○"
         status.text = parts.joinToString("  ")
         status.setTextColor(getColor(
-            if ((s.haConfigured && !s.haConnected) || (s.mqttConfigured && !s.mqttConnected)) R.color.gda_err else R.color.gda_ok
+            if ((s.haConfigured && !s.haConnected) || (s.mqttConfigured && !s.mqttConnected) || (s.zigbeeEnabled && !s.zigbeeRunning))
+                R.color.gda_err else R.color.gda_ok
         ))
     }
 

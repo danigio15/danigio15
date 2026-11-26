@@ -7,6 +7,7 @@ import it.gdahome.panel.ha.HaEntity
 import it.gdahome.panel.hw.PanelSensors
 import it.gdahome.panel.hw.Relay
 import it.gdahome.panel.hw.SysfsIo
+import it.gdahome.panel.hw.ZigbeeBridge
 import it.gdahome.panel.mqtt.MqttBridge
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +35,9 @@ data class PanelState(
     val temperature: Double? = null,
     val proximityNear: Boolean = false,
     val lux: Float? = null,
+    val zigbeeEnabled: Boolean = false,
+    val zigbeeRunning: Boolean = false,
+    val zigbeeMessage: String = "",
 )
 
 enum class ScreenCmd { WAKE, SLEEP }
@@ -56,6 +60,7 @@ object PanelHub {
     private var ha: HaClient? = null
     private var mqtt: MqttBridge? = null
     private var sensors: PanelSensors? = null
+    private var zigbee: ZigbeeBridge? = null
     private var loop: Job? = null
     @Volatile var screenOn: Boolean = true
         private set
@@ -93,7 +98,14 @@ object PanelHub {
             relays = relays.mapValues { null },
             haConfigured = cfg.haUrl.isNotEmpty() && cfg.haToken.isNotEmpty(),
             mqttConfigured = cfg.mqttHost.isNotEmpty(),
+            zigbeeEnabled = cfg.zigbeeEnabled && cfg.zigbeeDevice.isNotEmpty(),
         )
+
+        if (cfg.zigbeeEnabled && cfg.zigbeeDevice.isNotEmpty()) {
+            zigbee = ZigbeeBridge(app, cfg.zigbeeDevice, cfg.zigbeeBaud, cfg.zigbeePort, cfg.zigbeeRtsCts) { ok, msg ->
+                _state.update { it.copy(zigbeeRunning = ok, zigbeeMessage = msg) }
+            }.also { it.start() }
+        }
 
         if (cfg.haUrl.isNotEmpty() && cfg.haToken.isNotEmpty()) {
             ha = HaClient(cfg.haUrl, cfg.haToken,
@@ -146,6 +158,7 @@ object PanelHub {
         running = false
         loop?.cancel()
         sensors?.stop(); sensors = null
+        zigbee?.stop(); zigbee = null
         ha?.stop(); ha = null
         mqtt?.stop(); mqtt = null
         relays = emptyMap()

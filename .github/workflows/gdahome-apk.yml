@@ -1,4 +1,4 @@
-name: GDAHome APK
+name: GDAHome OS
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build APK
+    name: Build GDAHome OS
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -20,15 +20,31 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - name: Build
+      - name: Ponte Zigbee nativo (gdaserial) per ARM
+        run: |
+          NDK="${ANDROID_NDK_LATEST_HOME:-$ANDROID_NDK_HOME}"
+          TC="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          mkdir -p app/src/main/assets
+          "$TC/armv7a-linux-androideabi26-clang" -O2 -Wall -fPIE -pie -o app/src/main/assets/gdaserial-armeabi-v7a native/gdaserial.c
+          "$TC/aarch64-linux-android26-clang"   -O2 -Wall -fPIE -pie -o app/src/main/assets/gdaserial-arm64-v8a  native/gdaserial.c
+          "$TC/llvm-strip" app/src/main/assets/gdaserial-*
+          file app/src/main/assets/gdaserial-*
+      - name: App GDAHome
         run: |
           chmod +x gradlew
           echo "sdk.dir=${ANDROID_HOME:-/usr/local/lib/android/sdk}" > local.properties
           ./gradlew --no-daemon assembleRelease
+      - name: Pacchetto GDAHome OS
+        run: |
           mkdir -p dist
           cp app/build/outputs/apk/release/app-release.apk dist/GDAHome.apk
+          cp app/src/main/assets/gdaserial-* dist/
+          cp os/gdahome-os.sh os/bootanimation.zip dist/
           cp tools/* dist/
+          cp README.md dist/LEGGIMI.md
+          chmod +x dist/*.sh dist/gdaserial-*
+          ls -la dist
       - uses: actions/upload-artifact@v4
         with:
-          name: GDAHome
+          name: GDAHome-OS
           path: gdahome-nspanel/dist/

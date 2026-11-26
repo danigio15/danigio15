@@ -12,8 +12,8 @@ android {
         // NSPanel Pro (86) e NSPanel Pro 120 girano su Android 8.1 (API 27)
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
     }
 
     signingConfigs {

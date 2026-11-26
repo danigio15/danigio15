@@ -8,13 +8,13 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Home Assistant">
-        <EditTextPreference app:key="ha_url" app:title="Indirizzo" app:summary="es. http://192.168.1.10:8123" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="ha_url" app:title="Indirizzo (es. http://192.168.1.10:8123)" app:useSimpleSummaryProvider="true" />
         <EditTextPreference app:key="ha_token" app:title="Token di accesso a lunga durata" app:summary="Profilo HA → Sicurezza → Token" />
         <EditTextPreference app:key="ha_entities" app:title="Entità sul pannello" app:summary="Una per riga: light.cucina|Luce cucina" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="MQTT (relè e sensori in Home Assistant)">
-        <EditTextPreference app:key="mqtt_host" app:title="Broker" app:summary="es. 192.168.1.10" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="mqtt_host" app:title="Broker (es. 192.168.1.10)" app:useSimpleSummaryProvider="true" />
         <EditTextPreference app:key="mqtt_port" app:title="Porta" app:defaultValue="1883" app:useSimpleSummaryProvider="true" />
         <EditTextPreference app:key="mqtt_user" app:title="Utente" app:useSimpleSummaryProvider="true" />
         <EditTextPreference app:key="mqtt_pass" app:title="Password" />
@@ -37,6 +37,14 @@
         <EditTextPreference app:key="relay2_on" app:title="Valore ON" app:defaultValue="1" app:useSimpleSummaryProvider="true" />
         <EditTextPreference app:key="relay2_off" app:title="Valore OFF" app:defaultValue="0" app:useSimpleSummaryProvider="true" />
         <SwitchPreferenceCompat app:key="relay2_tile" app:title="Mostra sul pannello" app:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Zigbee integrato (per Zigbee2MQTT / ZHA)">
+        <SwitchPreferenceCompat app:key="zigbee_enabled" app:title="Esponi Zigbee in rete" app:defaultValue="false" app:summary="Indirizzo per Z2M/ZHA: socket://IP-pannello:porta" />
+        <EditTextPreference app:key="zigbee_device" app:title="Porta seriale (es. /dev/ttyS1, vedi Analisi hardware)" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="zigbee_baud" app:title="Velocità (baud)" app:defaultValue="115200" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="zigbee_port" app:title="Porta TCP" app:defaultValue="6638" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat app:key="zigbee_rtscts" app:title="Controllo di flusso RTS/CTS" app:defaultValue="false" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Schermo">
