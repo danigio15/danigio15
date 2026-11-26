@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GDAHome</string>
+    <string name="settings">Impostazioni GDAHome</string>
+    <string name="probe">Analisi hardware</string>
+    <string name="service_channel">Servizio pannello</string>
+    <string name="service_running">GDAHome attivo</string>
+    <string name="enter_pin">Inserisci PIN</string>
+    <string name="wrong_pin">PIN errato</string>
+    <string name="no_devices">Nessun dispositivo configurato.\nTieni premuto il logo per 3 secondi per aprire le impostazioni.</string>
+</resources>

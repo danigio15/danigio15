@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Generale">
+        <EditTextPreference app:key="panel_name" app:title="Nome pannello" app:defaultValue="GDAHome" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="device_id" app:title="ID dispositivo (topic MQTT)" app:defaultValue="gdahome_panel" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="pin" app:title="PIN impostazioni" app:defaultValue="1234" app:summary="Necessario per entrare nelle impostazioni" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Home Assistant">
+        <EditTextPreference app:key="ha_url" app:title="Indirizzo" app:summary="es. http://192.168.1.10:8123" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="ha_token" app:title="Token di accesso a lunga durata" app:summary="Profilo HA → Sicurezza → Token" />
+        <EditTextPreference app:key="ha_entities" app:title="Entità sul pannello" app:summary="Una per riga: light.cucina|Luce cucina" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="MQTT (relè e sensori in Home Assistant)">
+        <EditTextPreference app:key="mqtt_host" app:title="Broker" app:summary="es. 192.168.1.10" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="mqtt_port" app:title="Porta" app:defaultValue="1883" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="mqtt_user" app:title="Utente" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="mqtt_pass" app:title="Password" />
+        <SwitchPreferenceCompat app:key="mqtt_discovery" app:title="MQTT Discovery Home Assistant" app:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Relè 1">
+        <SwitchPreferenceCompat app:key="relay1_enabled" app:title="Abilitato" app:defaultValue="false" />
+        <EditTextPreference app:key="relay1_name" app:title="Nome" app:defaultValue="Relè 1" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="relay1_path" app:title="GPIO o percorso sysfs" app:summary="Numero GPIO (es. 37) o file (es. /sys/class/gpio/gpio37/value)" />
+        <EditTextPreference app:key="relay1_on" app:title="Valore ON" app:defaultValue="1" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="relay1_off" app:title="Valore OFF" app:defaultValue="0" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat app:key="relay1_tile" app:title="Mostra sul pannello" app:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Relè 2">
+        <SwitchPreferenceCompat app:key="relay2_enabled" app:title="Abilitato" app:defaultValue="false" />
+        <EditTextPreference app:key="relay2_name" app:title="Nome" app:defaultValue="Relè 2" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="relay2_path" app:title="GPIO o percorso sysfs" app:summary="Numero GPIO o file sysfs" />
+        <EditTextPreference app:key="relay2_on" app:title="Valore ON" app:defaultValue="1" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="relay2_off" app:title="Valore OFF" app:defaultValue="0" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat app:key="relay2_tile" app:title="Mostra sul pannello" app:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Schermo">
+        <EditTextPreference app:key="dim_after" app:title="Salvaschermo dopo (secondi)" app:defaultValue="60" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="off_after" app:title="Schermo nero dopo (secondi, 0 = mai)" app:defaultValue="300" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="brightness_active" app:title="Luminosità attiva (%)" app:defaultValue="80" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="brightness_dim" app:title="Luminosità salvaschermo (%)" app:defaultValue="8" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat app:key="wake_proximity" app:title="Risveglio con sensore di prossimità" app:defaultValue="true" />
+        <SwitchPreferenceCompat app:key="invert_proximity" app:title="Inverti sensore di prossimità" app:defaultValue="false" />
+        <EditTextPreference app:key="backlight_path" app:title="Retroilluminazione sysfs (opzionale)" app:summary="es. /sys/class/backlight/backlight/brightness" />
+        <EditTextPreference app:key="backlight_max" app:title="Valore massimo retroilluminazione" app:defaultValue="255" app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Temperatura">
+        <EditTextPreference app:key="temp_path" app:title="Sensore sysfs (opzionale)" app:summary="Usato se Android non espone il sensore di temperatura" />
+        <EditTextPreference app:key="temp_divisor" app:title="Divisore" app:defaultValue="1000" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="temp_offset" app:title="Correzione (°C)" app:defaultValue="0" app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Sistema">
+        <SwitchPreferenceCompat app:key="use_su" app:title="Usa root (su) per l'hardware" app:defaultValue="true" />
+        <Preference app:key="action_probe" app:title="Analisi hardware" app:summary="Trova GPIO, retroilluminazione, sensori e porte seriali" />
+        <Preference app:key="action_apply" app:title="Applica e riavvia servizio" />
+        <Preference app:key="action_android" app:title="Impostazioni Android" />
+        <Preference app:key="action_home" app:title="Cambia launcher predefinito" app:summary="Per uscire dalla modalità pannello" />
+    </PreferenceCategory>
+</PreferenceScreen>

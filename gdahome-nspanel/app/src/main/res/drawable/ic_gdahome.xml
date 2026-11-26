@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo GDAHome: casa stilizzata con "G" -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp" android:height="48dp"
+    android:viewportWidth="48" android:viewportHeight="48">
+    <path android:fillColor="#F5A623"
+        android:pathData="M24,4L4,20h5v22h30V20h5z" />
+    <path android:fillColor="#0E1116"
+        android:pathData="M31,25h-7v4h3.2c-0.6,2 -2.5,3.4 -4.7,3.4 -2.8,0 -5,-2.3 -5,-5.1s2.2,-5.1 5,-5.1c1.3,0 2.5,0.5 3.4,1.3l2.8,-2.8C27.1,18.2 24.9,17.3 22.5,17.3c-5,0 -9,4.2 -9,9.1s4,9.1 9,9.1c4.9,0 8.5,-3.6 8.5,-9.1z" />
+</vector>

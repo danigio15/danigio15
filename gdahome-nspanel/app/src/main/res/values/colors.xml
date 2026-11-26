@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="gda_bg">#0E1116</color>
+    <color name="gda_surface">#1A1F27</color>
+    <color name="gda_surface_on">#2A3A2E</color>
+    <color name="gda_accent">#F5A623</color>
+    <color name="gda_accent_dim">#7A5312</color>
+    <color name="gda_text">#F2F4F7</color>
+    <color name="gda_text_dim">#8A93A3</color>
+    <color name="gda_ok">#3DDC84</color>
+    <color name="gda_err">#FF5A5F</color>
+</resources>

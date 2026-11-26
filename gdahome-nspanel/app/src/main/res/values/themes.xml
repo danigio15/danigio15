@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GDAHome" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/gda_accent</item>
+        <item name="colorPrimaryDark">@color/gda_bg</item>
+        <item name="colorAccent">@color/gda_accent</item>
+        <item name="android:windowBackground">@color/gda_bg</item>
+        <item name="android:textColorPrimary">@color/gda_text</item>
+        <item name="android:textColorSecondary">@color/gda_text_dim</item>
+        <item name="android:colorBackground">@color/gda_bg</item>
+    </style>
+
+    <style name="Theme.GDAHome.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowShowWallpaper">false</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+</resources>
