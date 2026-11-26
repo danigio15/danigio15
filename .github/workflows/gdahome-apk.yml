@@ -20,10 +20,10 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
       - name: Build
         run: |
           chmod +x gradlew
+          echo "sdk.dir=${ANDROID_HOME:-/usr/local/lib/android/sdk}" > local.properties
           ./gradlew --no-daemon assembleRelease
           mkdir -p dist
           cp app/build/outputs/apk/release/app-release.apk dist/GDAHome.apk
