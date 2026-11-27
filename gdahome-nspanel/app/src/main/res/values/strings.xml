@@ -10,6 +10,6 @@
     <string name="avvio">Avvio di GdAHome…</string>
     <string name="apri">Apri GdAHome</string>
     <string name="impostazioni">Impostazioni</string>
-    <string name="manca_app">L\'app GdAHome non è installata su questo pannello.\nInstallala con gdahome-os.sh.</string>
+    <string name="manca_app">L\'app GdAHome non è installata su questo pannello.\nRimettila dall\'add-on GdAHome: Pannelli a muro › Aggiorna.</string>
     <string name="troppi_riavvii">GdAHome si è chiusa più volte.\nTocca «Apri GdAHome» per riprovare.</string>
 </resources>

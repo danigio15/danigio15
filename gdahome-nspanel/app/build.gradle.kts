@@ -12,7 +12,10 @@ android {
         // GdAHome OS: NSPanel Pro (86) e NSPanel Pro 120, Android 8.1 (API 27)
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
+        // Il numero lo da' la CI dell'add-on (GDAHOME_OS_CODICE, il numero della
+        // corsa, che cresce sempre): cosi' ogni GdAHome OS nuovo e' «piu' nuovo»
+        // di quello sul pannello e l'add-on lo sa aggiornare. A mano resta 3.
+        versionCode = System.getenv("GDAHOME_OS_CODICE")?.toIntOrNull() ?: 3
         versionName = "2.0.0"
     }
 
