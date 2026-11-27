@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="gda_bg">#0E1116</color>
-    <color name="gda_surface">#1A1F27</color>
-    <color name="gda_surface_on">#2A3A2E</color>
-    <color name="gda_accent">#F5A623</color>
-    <color name="gda_accent_dim">#7A5312</color>
-    <color name="gda_text">#F2F4F7</color>
-    <color name="gda_text_dim">#8A93A3</color>
-    <color name="gda_ok">#3DDC84</color>
-    <color name="gda_err">#FF5A5F</color>
+    <!-- Palette GDAHome (dal logo: blu, bianco, giallo fulmine) -->
+    <color name="gda_blue">#0E65C8</color>
+    <color name="gda_blue_light">#0FA3E8</color>
+    <color name="gda_blue_door">#0B74DE</color>
+    <color name="gda_yellow">#FACC15</color>
+    <color name="gda_yellow_dark">#CA8A04</color>
+
+    <color name="gda_bg">#0A1A2F</color>
+    <color name="gda_surface">#12263F</color>
+    <color name="gda_surface_stroke">#1C3556</color>
+    <color name="gda_badge">#1C3556</color>
+    <color name="gda_badge_on">#33FFFFFF</color>
+    <color name="gda_text">#F2F6FB</color>
+    <color name="gda_text_dim">#8FA3BF</color>
+    <color name="gda_text_on">#DCEBFF</color>
+    <color name="gda_ok">#34D399</color>
+    <color name="gda_err">#F87171</color>
+
+    <!-- compatibilità -->
+    <color name="gda_accent">@color/gda_yellow</color>
 </resources>

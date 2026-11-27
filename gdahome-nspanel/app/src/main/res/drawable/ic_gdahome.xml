@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Logo GDAHome: casa stilizzata con "G" -->
+<!-- Logo GDAHome (ricostruito in vettoriale dal logo originale) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="48dp" android:height="48dp"
-    android:viewportWidth="48" android:viewportHeight="48">
-    <path android:fillColor="#F5A623"
-        android:pathData="M24,4L4,20h5v22h30V20h5z" />
-    <path android:fillColor="#0E1116"
-        android:pathData="M31,25h-7v4h3.2c-0.6,2 -2.5,3.4 -4.7,3.4 -2.8,0 -5,-2.3 -5,-5.1s2.2,-5.1 5,-5.1c1.3,0 2.5,0.5 3.4,1.3l2.8,-2.8C27.1,18.2 24.9,17.3 22.5,17.3c-5,0 -9,4.2 -9,9.1s4,9.1 9,9.1c4.9,0 8.5,-3.6 8.5,-9.1z" />
+    android:viewportWidth="512" android:viewportHeight="512">
+    <path android:pathData="M108,8H404A100,100 0 0,1 504,108V404A100,100 0 0,1 404,504H108A100,100 0 0,1 8,404V108A100,100 0 0,1 108,8Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear"
+                android:startX="256" android:startY="8" android:endX="256" android:endY="504"
+                android:startColor="#0E65C8" android:endColor="#0FA3E8" />
+        </aapt:attr>
+    </path>
+    <!-- casa -->
+    <path android:fillColor="#FFFFFF" android:pathData="M256,96L96,236H136V401H376V236H416Z" />
+    <!-- porta -->
+    <path android:fillColor="#0B74DE" android:pathData="M238,298H274A12,12 0 0,1 286,310V388A12,12 0 0,1 274,400H238A12,12 0 0,1 226,388V310A12,12 0 0,1 238,298Z" />
+    <!-- fulmine -->
+    <path android:fillColor="#FACC15" android:strokeColor="#CA8A04" android:strokeWidth="5" android:strokeLineJoin="miter"
+        android:pathData="M277,148L216,264H258L233,343L311,224H266Z" />
 </vector>

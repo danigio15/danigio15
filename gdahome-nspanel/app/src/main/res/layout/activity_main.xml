@@ -9,26 +9,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:paddingStart="12dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp">
 
-        <!-- Intestazione: logo, ora, data, temperatura, stato connessioni -->
+        <!-- Intestazione -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/ic_gdahome" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="12dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -36,8 +41,9 @@
                     android:id="@+id/clock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
                     android:textColor="@color/gda_text"
-                    android:textSize="30sp"
+                    android:textSize="34sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -49,32 +55,69 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/temp_chip"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:orientation="vertical">
+                android:layout_height="40dp"
+                android:background="@drawable/chip_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingEnd="14dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/mdi_thermometer"
+                    android:tint="@color/gda_yellow" />
 
                 <TextView
                     android:id="@+id/temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/gda_accent"
-                    android:textSize="24sp" />
-
-                <TextView
-                    android:id="@+id/status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/gda_text_dim"
-                    android:textSize="11sp" />
+                    android:layout_marginStart="4dp"
+                    android:textColor="@color/gda_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </LinearLayout>
+        </LinearLayout>
+
+        <!-- Stato connessioni -->
+        <LinearLayout
+            android:id="@+id/status_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
+
+            <TextView
+                android:id="@+id/greeting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/gda_text"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/gda_text_dim"
+                android:textSize="11sp" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/grid"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
             android:layout_weight="1"
             android:clipToPadding="false"
             android:overScrollMode="never" />
@@ -92,7 +135,7 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <!-- Salvaschermo: orologio grande (dim) oppure nero totale (off) -->
+    <!-- Salvaschermo -->
     <FrameLayout
         android:id="@+id/screensaver"
         android:layout_width="match_parent"
@@ -107,22 +150,43 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginBottom="12dp"
+                android:alpha="0.9"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_gdahome" />
 
             <TextView
                 android:id="@+id/saver_clock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:includeFontPadding="false"
                 android:textColor="@color/gda_text"
-                android:textSize="72sp" />
+                android:textSize="84sp"
+                android:fontFamily="sans-serif-light" />
+
+            <TextView
+                android:id="@+id/saver_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/gda_text_dim"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/saver_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gda_accent"
-                android:textSize="22sp" />
+                android:layout_marginTop="14dp"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/gda_yellow"
+                android:textSize="24sp" />
         </LinearLayout>
     </FrameLayout>
 </FrameLayout>

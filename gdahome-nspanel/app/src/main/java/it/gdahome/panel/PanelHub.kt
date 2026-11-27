@@ -40,7 +40,7 @@ data class PanelState(
     val zigbeeMessage: String = "",
 )
 
-enum class ScreenCmd { WAKE, SLEEP }
+enum class ScreenCmd { WAKE, DIM, SLEEP }
 
 /** Cuore dell'app: possiede hardware, connessione HA e MQTT. Vive nel servizio in primo piano. */
 object PanelHub {
@@ -107,7 +107,12 @@ object PanelHub {
             }.also { it.start() }
         }
 
-        if (cfg.haUrl.isNotEmpty() && cfg.haToken.isNotEmpty()) {
+        if (cfg.demo) {
+            _state.update {
+                it.copy(haEntities = DemoData.entities(), haConfigured = true, haConnected = true, haMessage = "demo",
+                    temperature = it.temperature ?: 21.5)
+            }
+        } else if (cfg.haUrl.isNotEmpty() && cfg.haToken.isNotEmpty()) {
             ha = HaClient(cfg.haUrl, cfg.haToken,
                 onStates = { all -> _state.update { it.copy(haEntities = all) } },
                 onConnection = { ok, msg -> _state.update { it.copy(haConnected = ok, haMessage = msg) } },
@@ -194,7 +199,12 @@ object PanelHub {
             sub.startsWith("relay") && sub.endsWith("/set") -> {
                 sub.removePrefix("relay").removeSuffix("/set").toIntOrNull()?.let { setRelay(it, on) }
             }
-            sub == "screen/set" -> _screen.tryEmit(if (on) ScreenCmd.WAKE else ScreenCmd.SLEEP)
+            sub == "screen/set" -> _screen.tryEmit(
+                when {
+                    payload.equals("DIM", true) -> ScreenCmd.DIM
+                    on -> ScreenCmd.WAKE
+                    else -> ScreenCmd.SLEEP
+                })
             sub == "command" -> _commands.tryEmit(payload.lowercase())
         }
     }
@@ -217,7 +227,19 @@ object PanelHub {
     fun relayName(index: Int) = relays[index]?.cfg?.name ?: "Relè $index"
     fun relayTile(index: Int) = relays[index]?.cfg?.showTile ?: false
 
-    fun haTap(e: HaEntity) { scope.launch { ha?.tap(e) } }
+    fun haTap(e: HaEntity) {
+        if (config.demo) {
+            _state.update { it.copy(haEntities = it.haEntities + (e.entityId to DemoData.toggle(e))) }
+            return
+        }
+        scope.launch { ha?.tap(e) }
+    }
+
+    /** Solo per i test di rendering. */
+    internal fun sendScreenForPreview(cmd: ScreenCmd) { _screen.tryEmit(cmd) }
+
+    /** Solo per i test di rendering e la modalità demo. */
+    internal fun setStateForPreview(s: PanelState) { _state.value = s }
 
     fun haCall(domain: String, service: String, entityId: String, data: org.json.JSONObject) {
         scope.launch { ha?.callService(domain, service, entityId, data) }

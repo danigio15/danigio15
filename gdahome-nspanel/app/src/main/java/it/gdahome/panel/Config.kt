@@ -15,13 +15,16 @@ class Config(context: Context) {
     // Generali
     val panelName get() = str("panel_name", "GDAHome").ifEmpty { "GDAHome" }
     val pin get() = str("pin", "1234")
+    /** Testo mostrato sopra i riquadri, es. "Casa" o "Soggiorno" */
+    val roomName get() = str("room_name", "Casa").ifEmpty { "Casa" }
 
     // Home Assistant
     val haUrl get() = str("ha_url").trimEnd('/')
     val haToken get() = str("ha_token")
     /** Una entità per riga, formato: `light.cucina` oppure `light.cucina|Luce cucina` */
+    val demo get() = bool("demo_mode", false)
     val haEntities: List<Pair<String, String?>>
-        get() = str("ha_entities").lines().map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }
+        get() = if (demo) DemoData.entityList else str("ha_entities").lines().map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }
             .map { line ->
                 val parts = line.split("|", limit = 2)
                 parts[0].trim() to parts.getOrNull(1)?.trim()?.ifEmpty { null }

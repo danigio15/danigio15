@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -38,6 +41,11 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        /** Ora fissa per i render di anteprima (null = ora reale). */
+        @Volatile var previewTime: Long? = null
+    }
+
     private enum class Mode { ACTIVE, DIM, OFF }
 
     private lateinit var cfg: Config
@@ -52,6 +60,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var saverContent: View
     private lateinit var saverClock: TextView
     private lateinit var saverInfo: TextView
+    private lateinit var saverDate: TextView
+    private lateinit var greeting: TextView
+    private lateinit var tempChip: View
 
     private val handler = Handler(Looper.getMainLooper())
     private var mode = Mode.ACTIVE
@@ -61,11 +72,14 @@ class MainActivity : AppCompatActivity() {
 
     private val ticker = object : Runnable {
         override fun run() {
-            val now = Date()
+            val now = Date(previewTime ?: System.currentTimeMillis())
             val t = timeFmt.format(now)
             clock.text = t
             saverClock.text = t
-            date.text = dateFmt.format(now).replaceFirstChar { it.uppercase() }
+            val d = dateFmt.format(now).replaceFirstChar { it.uppercase() }
+            date.text = d
+            saverDate.text = d
+            updateGreeting(now)
             checkIdle()
             handler.postDelayed(this, 1000)
         }
@@ -88,6 +102,9 @@ class MainActivity : AppCompatActivity() {
         saverContent = findViewById(R.id.saver_content)
         saverClock = findViewById(R.id.saver_clock)
         saverInfo = findViewById(R.id.saver_info)
+        saverDate = findViewById(R.id.saver_date)
+        greeting = findViewById(R.id.greeting)
+        tempChip = findViewById(R.id.temp_chip)
 
         adapter = TileAdapter(::onTileTap, ::onTileLongPress)
         grid.adapter = adapter
@@ -104,6 +121,7 @@ class MainActivity : AppCompatActivity() {
                     PanelHub.screenCommands.collect {
                         when (it) {
                             ScreenCmd.WAKE -> wake()
+                            ScreenCmd.DIM -> setMode(Mode.DIM)
                             ScreenCmd.SLEEP -> setMode(Mode.OFF)
                         }
                     }
@@ -225,19 +243,34 @@ class MainActivity : AppCompatActivity() {
         empty.visibility = if (tiles.isEmpty()) View.VISIBLE else View.GONE
         grid.visibility = if (tiles.isEmpty()) View.GONE else View.VISIBLE
 
-        val t = s.temperature?.let { String.format(Locale.ITALY, "%.1f°", it) } ?: ""
-        temperature.text = t
-        saverInfo.text = t
+        val t = s.temperature?.let { String.format(Locale.ITALY, "%.1f°", it) }
+        temperature.text = t ?: ""
+        tempChip.visibility = if (t == null) View.GONE else View.VISIBLE
+        saverInfo.text = t ?: ""
+        saverInfo.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            if (t == null) 0 else R.drawable.mdi_thermometer, 0, 0, 0)
+        saverInfo.compoundDrawablesRelative[0]?.setTint(getColor(R.color.gda_yellow))
 
-        val parts = mutableListOf<String>()
-        if (s.haConfigured) parts += if (s.haConnected) "HA ●" else "HA ○"
-        if (s.mqttConfigured) parts += if (s.mqttConnected) "MQTT ●" else "MQTT ○"
-        if (s.zigbeeEnabled) parts += if (s.zigbeeRunning) "ZB ●" else "ZB ○"
-        status.text = parts.joinToString("  ")
-        status.setTextColor(getColor(
-            if ((s.haConfigured && !s.haConnected) || (s.mqttConfigured && !s.mqttConnected) || (s.zigbeeEnabled && !s.zigbeeRunning))
-                R.color.gda_err else R.color.gda_ok
-        ))
+        // Stato connessioni: "● HA  ● MQTT  ● Zigbee" con pallino verde/rosso
+        val sb = SpannableStringBuilder()
+        fun item(label: String, ok: Boolean) {
+            if (sb.isNotEmpty()) sb.append("   ")
+            val start = sb.length
+            sb.append("●")
+            sb.setSpan(ForegroundColorSpan(getColor(if (ok) R.color.gda_ok else R.color.gda_err)), start, start + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            sb.append(" ").append(label)
+        }
+        if (s.haConfigured) item(if (s.haMessage == "demo") "Demo" else "Home Assistant", s.haConnected)
+        if (s.mqttConfigured) item("MQTT", s.mqttConnected)
+        if (s.zigbeeEnabled) item("Zigbee", s.zigbeeRunning)
+        status.text = sb
+    }
+
+    private fun updateGreeting(now: Date) {
+        if (!::cfg.isInitialized) return
+        val h = java.util.Calendar.getInstance().apply { time = now }.get(java.util.Calendar.HOUR_OF_DAY)
+        val g = when (h) { in 5..12 -> "Buongiorno"; in 13..17 -> "Buon pomeriggio"; else -> "Buonasera" }
+        greeting.text = "$g · ${cfg.roomName}"
     }
 
     // ---------- Interazione ----------

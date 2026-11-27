@@ -5,9 +5,11 @@ from PIL import Image, ImageDraw, ImageFont
 
 W = H = 480          # NSPanel Pro 86: Android centra/scala l'animazione sugli altri display
 FPS = 20
-BG = (14, 17, 22)
-ACCENT = (245, 166, 35)
-TEXT = (242, 244, 247)
+BG = (10, 26, 47)                 # blu notte GDAHome
+ACCENT = (250, 204, 21)           # giallo fulmine
+TEXT = (242, 246, 251)
+BLUE_TOP, BLUE_BOT, DOOR = (14, 101, 200), (15, 163, 232), (11, 116, 222)
+STROKE = (202, 138, 4)
 
 def font(size):
     for name in ("DejaVuSans-Bold.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "Arial Bold.ttf"):
@@ -19,16 +21,28 @@ def font(size):
 
 F_TITLE, F_SUB = font(44), font(16)
 
-def house(draw, cx, cy, s, color, fill_g=BG):
-    # tetto + corpo (come ic_gdahome.xml, viewport 48)
-    k = s / 48.0
-    pts = [(24, 4), (4, 20), (9, 20), (9, 42), (39, 42), (39, 20), (44, 20)]
-    draw.polygon([(cx + (x - 24) * k, cy + (y - 24) * k) for x, y in pts], fill=color)
-    # "G"
-    r = 9 * k
-    gx, gy = cx - 1.5 * k, cy + 3 * k
-    draw.arc([gx - r, gy - r, gx + r, gy + r], 40, 330, fill=fill_g, width=max(2, int(3.2 * k)))
-    draw.rectangle([gx, gy - 1.6 * k, gx + r, gy + 1.6 * k], fill=fill_g)
+def logo(size):
+    """Logo GDAHome (stessa geometria di ic_gdahome.xml, viewport 512), disegnato a 4x e ridotto."""
+    S = 4 * size
+    k = S / 512.0
+    P = lambda pts: [(x * k, y * k) for x, y in pts]
+    img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+    grad = Image.new("RGBA", (S, S))
+    gd = ImageDraw.Draw(grad)
+    for y in range(S):
+        t = y / (S - 1)
+        gd.line([(0, y), (S, y)], fill=tuple(int(a + (b - a) * t) for a, b in zip(BLUE_TOP, BLUE_BOT)) + (255,))
+    m = Image.new("L", (S, S), 0)
+    ImageDraw.Draw(m).rounded_rectangle([8 * k, 8 * k, 504 * k, 504 * k], 100 * k, fill=255)
+    img.paste(grad, (0, 0), m)
+    d = ImageDraw.Draw(img)
+    d.polygon(P([(256, 96), (96, 236), (136, 236), (136, 401), (376, 401), (376, 236), (416, 236)]), fill="white")
+    d.rounded_rectangle([226 * k, 298 * k, 286 * k, 400 * k], 12 * k, fill=DOOR)
+    d.polygon(P([(277, 148), (216, 264), (258, 264), (233, 343), (311, 224), (266, 224)]),
+              fill=ACCENT, outline=STROKE, width=max(1, int(5 * k)))
+    return img.resize((size, size), Image.LANCZOS)
+
+LOGO = {}
 
 def frame(i, total, intro):
     img = Image.new("RGB", (W, H), BG)
@@ -42,8 +56,13 @@ def frame(i, total, intro):
         t = i / total
         size = 140 + 6 * math.sin(t * 2 * math.pi)
         a = 1.0
-    col = tuple(int(BG[c] + (ACCENT[c] - BG[c]) * a) for c in range(3))
-    house(d, W / 2, H / 2 - 40, size, col)
+    sz = int(size)
+    if sz not in LOGO:
+        LOGO[sz] = logo(sz)
+    lg = LOGO[sz].copy()
+    if a < 1:
+        lg.putalpha(lg.getchannel("A").point(lambda v: int(v * a)))
+    img.paste(lg, (int(W / 2 - sz / 2), int(H / 2 - 40 - sz / 2)), lg)
     tc = tuple(int(BG[c] + (TEXT[c] - BG[c]) * a) for c in range(3))
     for text, f, y in (("GDAHome", F_TITLE, H / 2 + 60), ("OS", F_SUB, H / 2 + 110)):
         w = d.textlength(text, font=f)

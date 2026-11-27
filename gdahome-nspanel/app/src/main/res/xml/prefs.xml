@@ -3,6 +3,8 @@
 
     <PreferenceCategory app:title="Generale">
         <EditTextPreference app:key="panel_name" app:title="Nome pannello" app:defaultValue="GDAHome" app:useSimpleSummaryProvider="true" />
+        <EditTextPreference app:key="room_name" app:title="Titolo sopra i riquadri" app:defaultValue="Casa" app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat app:key="demo_mode" app:title="Modalità demo" app:summary="Mostra una casa di esempio senza Home Assistant" app:defaultValue="false" />
         <EditTextPreference app:key="device_id" app:title="ID dispositivo (topic MQTT)" app:defaultValue="gdahome_panel" app:useSimpleSummaryProvider="true" />
         <EditTextPreference app:key="pin" app:title="PIN impostazioni" app:defaultValue="1234" app:summary="Necessario per entrare nelle impostazioni" />
     </PreferenceCategory>

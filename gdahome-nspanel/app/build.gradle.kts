@@ -47,6 +47,15 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all {
+                it.systemProperty("gda.renderDir", rootProject.file("docs/renders/raw").absolutePath)
+                it.maxHeapSize = "2g"
+            }
+        }
+    }
     lint {
         abortOnError = false
         checkReleaseBuilds = false
@@ -62,4 +71,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+
+    // Render reali dell'interfaccia (Robolectric con grafica nativa)
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("androidx.test:core-ktx:1.6.1")
+    testImplementation("androidx.test.ext:junit-ktx:1.2.1")
 }
