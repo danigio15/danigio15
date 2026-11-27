@@ -69,6 +69,12 @@ object PanelHub {
         relays = (1..2).map { Relay(cfg.relay(it)) }.filter { it.usable }.associateBy { it.cfg.index }
         relays.values.forEach { r -> scope.launch { r.init() } }
 
+        /* Il pannello e' lento: qui non gira niente che nessuno usa.
+         * I sensori li legge gia' l'app GdAHome per la plancia (luminosita',
+         * prossimita'); qui servono solo per mandarli a Home Assistant con
+         * MQTT. Senza MQTT restano spenti: ogni lettura svegliava il processo
+         * per niente. */
+        val conMqtt = cfg.mqttHost.isNotEmpty()
         sensors = PanelSensors(app,
             onProximity = { near ->
                 _state.update { it.copy(proximityNear = near) }
@@ -80,7 +86,7 @@ object PanelHub {
             },
             onTemperature = { t -> updateTemperature(t + cfg.tempOffset) },
             invertProximity = cfg.invertProximity,
-        ).also { it.start() }
+        ).also { if (conMqtt) it.start() }
 
         _state.value = PanelState(
             relays = relays.mapValues { null },
@@ -109,7 +115,9 @@ object PanelHub {
             ).also { it.start() }
         }
 
-        loop = scope.launch {
+        /* Il giro ogni due secondi serve ai rele' e alla temperatura da file:
+         * senza nessuno dei due, non parte. */
+        if (relays.isNotEmpty() || cfg.tempPath.isNotEmpty()) loop = scope.launch {
             var tick = 0
             while (isActive) {
                 relays.values.forEach { r ->
@@ -129,14 +137,14 @@ object PanelHub {
                 delay(2000)
             }
         }
-        Log.i(TAG, "avviato: relè=${relays.keys} mqtt=${mqtt != null} zigbee=${zigbee != null}")
+        Log.i(TAG, "avviato: relè=${relays.keys} mqtt=${mqtt != null} zigbee=${zigbee != null} giro=${loop != null}")
     }
 
     @Synchronized
     fun stop() {
         if (!running) return
         running = false
-        loop?.cancel()
+        loop?.cancel(); loop = null
         sensors?.stop(); sensors = null
         zigbee?.stop(); zigbee = null
         mqtt?.stop(); mqtt = null
