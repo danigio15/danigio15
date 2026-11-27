@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- L'anello d'oro che gira attorno al marchio mentre si apre GdAHome -->
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0" android:toDegrees="360" android:pivotX="50%" android:pivotY="50%">
+    <shape android:shape="ring" android:innerRadiusRatio="2.25" android:thicknessRatio="60" android:useLevel="false">
+        <gradient android:type="sweep" android:startColor="#00F6B85C" android:centerColor="#80F6B85C" android:endColor="@color/gda_oro" />
+    </shape>
+</rotate>

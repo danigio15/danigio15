@@ -1,19 +1,16 @@
-name: GDAHome OS
+name: GdAHome OS
 
 on:
   push:
     paths:
       - "gdahome-nspanel/**"
       - ".github/workflows/gdahome-apk.yml"
-      - "!gdahome-nspanel/docs/renders/**"
+      - "!gdahome-nspanel/docs/**"
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build:
-    name: Build GDAHome OS
+    name: Build GdAHome OS
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -33,42 +30,23 @@ jobs:
           "$TC/aarch64-linux-android26-clang"   -O2 -Wall -fPIE -pie -o app/src/main/assets/gdaserial-arm64-v8a  native/gdaserial.c
           "$TC/llvm-strip" app/src/main/assets/gdaserial-*
           file app/src/main/assets/gdaserial-*
-      - name: App GDAHome
+      - name: GdAHome OS (strato di sistema)
         run: |
           chmod +x gradlew
           echo "sdk.dir=${ANDROID_HOME:-/usr/local/lib/android/sdk}" > local.properties
           ./gradlew --no-daemon assembleRelease
-      - name: Pacchetto GDAHome OS
+      - name: Pacchetto GdAHome OS
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/release/app-release.apk dist/GDAHome.apk
+          cp app/build/outputs/apk/release/app-release.apk dist/GdAHome-OS.apk
           cp app/src/main/assets/gdaserial-* dist/
-          cp os/gdahome-os.sh os/bootanimation.zip dist/
+          cp os/gdahome-os.sh os/bootanimation-86.zip os/bootanimation-120.zip dist/
           cp tools/* dist/
           cp README.md dist/LEGGIMI.md
           chmod +x dist/*.sh dist/gdaserial-*
+          echo "Metti qui GdAHome.apk (l'app GdAHome ufficiale per Android)" > dist/METTI-QUI-GdAHome.apk.txt
           ls -la dist
       - uses: actions/upload-artifact@v4
         with:
-          name: GDAHome-OS
+          name: GdAHome-OS
           path: gdahome-nspanel/dist/
-      - name: Render reali dell'interfaccia (480x480 e 750x1334)
-        run: ./gradlew --no-daemon testDebugUnitTest --tests 'it.gdahome.panel.RenderTest'
-      - name: Mockup dei pannelli
-        run: |
-          pip install --quiet pillow
-          python3 docs/make_mockups.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: GDAHome-render
-          path: gdahome-nspanel/docs/renders/
-      - name: Salva i render nel repository
-        if: github.event_name == 'push'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/renders
-          if ! git diff --cached --quiet; then
-            git commit -m "GDAHome: aggiorna i render dell'interfaccia"
-            git push origin HEAD:${{ github.ref_name }}
-          fi

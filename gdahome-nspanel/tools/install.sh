@@ -1,65 +1,41 @@
 #!/usr/bin/env bash
-# Installa GDAHome su un Sonoff NSPanel Pro / NSPanel Pro 120 via ADB (Wi-Fi, porta 5555).
+# GdAHome OS — installazione leggera (senza toccare la partizione di sistema).
+# Utile per provare: installa l'app GdAHome e GdAHome OS come app normali,
+# imposta l'avvio GdAHome come schermata home e, se vuoi, DISATTIVA le app Sonoff.
 #
 # Uso:
-#   ./install.sh <IP-pannello> [file.apk]                  installa e imposta GDAHome come launcher
-#   ./install.sh <IP-pannello> [file.apk] --disable-sonoff  ...e disattiva le app Sonoff/eWeLink
-#
-# Le app Sonoff vengono solo DISATTIVATE (non cancellate): restore.sh le riattiva.
+#   ./install.sh <IP-pannello>                    GdAHome + GdAHome OS, Sonoff resta
+#   ./install.sh <IP-pannello> --disable-sonoff   ...e disattiva le app Sonoff
+# Nella cartella servono GdAHome.apk (app ufficiale) e GdAHome-OS.apk.
+# Per il sistema completo usa gdahome-os.sh.
 set -euo pipefail
 
 IP="${1:?Indica IP del pannello, es: ./install.sh 192.168.1.50}"
-APK="${2:-GDAHome.apk}"
-DISABLE=0
-for a in "$@"; do [[ "$a" == "--disable-sonoff" ]] && DISABLE=1; done
-[[ "$APK" == "--disable-sonoff" ]] && APK="GDAHome.apk"
-
-PKG="it.gdahome.panel"
-HOME_ACT="$PKG/.ui.MainActivity"
+DISABLE=0; [[ "${2:-}" == "--disable-sonoff" ]] && DISABLE=1
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OS_PKG="com.gdahome.os"; GDA="com.gdahome.gdahome"
+HOME_ACT="$OS_PKG/.ui.AvvioActivity"
 DEV="$IP:5555"
 A() { adb -s "$DEV" "$@"; }
 
-echo "==> Connessione a $DEV"
-adb connect "$DEV"
-A wait-for-device
+for f in GdAHome.apk GdAHome-OS.apk; do [[ -f "$HERE/$f" ]] || { echo "Manca $f in $HERE"; exit 1; }; done
 
-echo "==> Modello: $(A shell getprop ro.product.model | tr -d '\r')  Android $(A shell getprop ro.build.version.release | tr -d '\r')"
-
-echo "==> Installazione $APK"
-A install -r "$APK"
-
-echo "==> GDAHome come launcher predefinito"
-A shell cmd package set-home-activity "$HOME_ACT" 2>/dev/null \
-  || A shell pm set-home-activity "$HOME_ACT" 2>/dev/null \
-  || echo "   (impostalo a mano: premi Home sul pannello e scegli GDAHome → Sempre)"
-
-echo "==> Schermo sempre acceso a livello Android (lo spegnimento lo gestisce GDAHome)"
+echo "==> Connessione a $DEV"; adb connect "$DEV"; A wait-for-device
+echo "==> $(A shell getprop ro.product.model | tr -d '\r'), Android $(A shell getprop ro.build.version.release | tr -d '\r')"
+echo "==> App GdAHome";  A install -r -g "$HERE/GdAHome.apk"
+echo "==> GdAHome OS";   A install -r "$HERE/GdAHome-OS.apk"
+A shell pm uninstall it.gdahome.panel >/dev/null 2>&1 || true
+A shell cmd package set-home-activity "$HOME_ACT" >/dev/null 2>&1 \
+  || echo "   (impostala a mano: premi Home sul pannello e scegli GdAHome OS → Sempre)"
 A shell settings put system screen_off_timeout 2147483647
 A shell settings put global stay_on_while_plugged_in 7 || true
-A shell appops set "$PKG" WRITE_SETTINGS allow || true
-A shell dumpsys deviceidle whitelist +"$PKG" >/dev/null || true
+for p in $OS_PKG $GDA; do A shell dumpsys deviceidle whitelist +"$p" >/dev/null || true; done
 
-echo "==> App Sonoff/eWeLink trovate sul pannello:"
-SONOFF=$(A shell pm list packages | tr -d '\r' | sed 's/^package://' \
-  | grep -iE 'sonoff|ewelink|itead|coolkit|smatek' | grep -v "^$PKG$" || true)
-if [[ -z "$SONOFF" ]]; then echo "   nessuna"; else echo "$SONOFF" | sed 's/^/   /'; fi
-
+SONOFF=$(A shell pm list packages | tr -d '\r' | sed 's/^package://' | grep -iE 'sonoff|ewelink|itead|coolkit|smatek' || true)
+echo "==> App Sonoff/eWeLink:"; [[ -z "$SONOFF" ]] && echo "   nessuna" || echo "$SONOFF" | sed 's/^/   /'
 if [[ $DISABLE -eq 1 && -n "$SONOFF" ]]; then
-  BACKUP="sonoff-disabilitate-$IP.txt"
-  echo "==> Disattivo le app Sonoff (elenco salvato in $BACKUP)"
-  : > "$BACKUP"
-  for p in $SONOFF; do
-    if A shell pm disable-user --user 0 "$p" | grep -q "disabled"; then
-      echo "$p" >> "$BACKUP"; echo "   disattivata: $p"
-    else
-      echo "   NON disattivata: $p"
-    fi
-  done
+  BACKUP="sonoff-disabilitate-$IP.txt"; : > "$BACKUP"
+  for p in $SONOFF; do A shell pm disable-user --user 0 "$p" | grep -q disabled && { echo "$p" >> "$BACKUP"; echo "   disattivata: $p"; }; done
 fi
-
-echo "==> Avvio GDAHome"
 A shell am start -n "$HOME_ACT" >/dev/null
-A shell input keyevent 3
-echo
-echo "Fatto. Tieni premuto il logo GDAHome per entrare nelle impostazioni (PIN predefinito 1234)."
-[[ $DISABLE -eq 0 ]] && echo "Le app Sonoff sono ancora installate: quando sei soddisfatto rilancia con --disable-sonoff."
+echo "Fatto. Sul pannello si apre GdAHome: abbinalo alla casa e scegli la plancia «A muro»."

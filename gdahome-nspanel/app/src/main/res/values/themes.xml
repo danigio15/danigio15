@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.GDAHome" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/gda_blue</item>
-        <item name="colorPrimaryDark">@color/gda_bg</item>
-        <item name="colorAccent">@color/gda_yellow</item>
-        <item name="android:windowBackground">@color/gda_bg</item>
-        <item name="android:textColorPrimary">@color/gda_text</item>
-        <item name="android:textColorSecondary">@color/gda_text_dim</item>
-        <item name="android:colorBackground">@color/gda_bg</item>
-        <item name="alertDialogTheme">@style/Theme.GDAHome.Dialog</item>
-        <item name="android:alertDialogTheme">@style/Theme.GDAHome.Dialog</item>
+    <style name="Theme.GdAHomeOS" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/gda_blu</item>
+        <item name="colorPrimaryDark">@color/gda_fondo</item>
+        <item name="colorAccent">@color/gda_oro</item>
+        <item name="android:windowBackground">@color/gda_fondo</item>
+        <item name="android:colorBackground">@color/gda_fondo</item>
+        <item name="android:textColorPrimary">@color/gda_nome</item>
+        <item name="android:textColorSecondary">@color/gda_riga</item>
+        <item name="alertDialogTheme">@style/Theme.GdAHomeOS.Dialog</item>
+        <item name="android:alertDialogTheme">@style/Theme.GdAHomeOS.Dialog</item>
     </style>
 
-    <style name="Theme.GDAHome.Dialog" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorAccent">@color/gda_yellow</item>
+    <style name="Theme.GdAHomeOS.Dialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/gda_oro</item>
         <item name="android:windowBackground">@drawable/dialog_bg</item>
-        <item name="android:textColorPrimary">@color/gda_text</item>
+        <item name="android:textColorPrimary">@color/gda_nome</item>
     </style>
 
-    <style name="Theme.GDAHome.Fullscreen">
+    <!-- L'avvio: a tutto schermo, senza anteprima bianca -->
+    <style name="Theme.GdAHomeOS.Avvio">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowShowWallpaper">false</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowBackground">@drawable/avvio_fondo</item>
     </style>
 </resources>

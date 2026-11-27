@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Palette GDAHome (dal logo: blu, bianco, giallo fulmine) -->
-    <color name="gda_blue">#0E65C8</color>
-    <color name="gda_blue_light">#0FA3E8</color>
-    <color name="gda_blue_door">#0B74DE</color>
-    <color name="gda_yellow">#FACC15</color>
-    <color name="gda_yellow_dark">#CA8A04</color>
-
-    <color name="gda_bg">#0A1A2F</color>
-    <color name="gda_surface">#12263F</color>
-    <color name="gda_surface_stroke">#1C3556</color>
-    <color name="gda_badge">#1C3556</color>
-    <color name="gda_badge_on">#33FFFFFF</color>
-    <color name="gda_text">#F2F6FB</color>
-    <color name="gda_text_dim">#8FA3BF</color>
-    <color name="gda_text_on">#DCEBFF</color>
+    <!-- Gli stessi colori dell'avvio dell'app GdAHome (app/lib/schermate/caricamento.dart) -->
+    <color name="gda_fondo">#0B1220</color>
+    <color name="gda_fondo_alto">#070D19</color>
+    <color name="gda_blu">#3B82F6</color>
+    <color name="gda_blu_elettrico">#2563EB</color>
+    <color name="gda_oro">#F6B85C</color>
+    <color name="gda_oro_chiaro">#FFDDA6</color>
+    <color name="gda_nome">#E6ECF5</color>
+    <color name="gda_riga">#8C9CB5</color>
+    <color name="gda_superficie">#111A2E</color>
     <color name="gda_ok">#34D399</color>
     <color name="gda_err">#F87171</color>
-
-    <!-- compatibilità -->
-    <color name="gda_accent">@color/gda_yellow</color>
 </resources>

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Inserisce i render reali dell'interfaccia (docs/renders/raw/*.png, generati da RenderTest)
+Inserisce i render reali della plancia a muro di GdAHome (docs/renders/raw/*.png,
+generati da docs/fotografa-il-muro.mjs)
 in una cornice da pannello a muro, con proporzioni dei due modelli:
   - 86:  corpo 86 x 86 mm, schermo 3,95" quadrato (480x480)
   - 120: corpo ~74 x 120 mm, schermo 4,7" verticale (750x1334)
@@ -95,24 +96,21 @@ def panel120(raw, px_mm=PX_MM):
     return device(raw, (BW, BH), (mx, my, mx + w, my + h), radius=int(7 * px_mm))
 
 def main():
-    made = []
-    for name, maker, cap in [
-        ("home_86", panel86, "NSPanel Pro 86 · 480×480"),
-        ("screensaver_86", panel86, "NSPanel Pro 86 · salvaschermo"),
-        ("home_120", panel120, "NSPanel Pro 120 · 750×1334"),
-        ("screensaver_120", panel120, "NSPanel Pro 120 · salvaschermo"),
-        ("settings_86", panel86, "Impostazioni"),
-    ]:
-        p = os.path.join(RAW, name + ".png")
-        if not os.path.exists(p):
-            print("manca", p); continue
-        img = on_wall(maker(Image.open(p)), caption=cap)
-        out = os.path.join(OUT, f"mockup_{name}.png")
-        img.convert("RGB").save(out, optimize=True)
-        made.append(out); print("scritto", out)
+    schermate = [
+        ("avvio", "L'avvio"), ("stanza", "La stanza"), ("scene", "Le scene"), ("ingresso", "L'ingresso"), ("riposo", "Il riposo"),
+    ]
+    for chiave, titolo in schermate:
+        for mod, maker in (("86", panel86), ("120", panel120)):
+            p = os.path.join(RAW, f"muro_{chiave}_{mod}.png")
+            if not os.path.exists(p):
+                print("manca", p); continue
+            img = on_wall(maker(Image.open(p)), caption=f"NSPanel Pro {mod} · {titolo}")
+            out = os.path.join(OUT, f"muro_{chiave}_{mod}.jpg")
+            img.convert("RGB").save(out, quality=88, optimize=True)
+            print("scritto", out)
 
-    # copertina: i due pannelli affiancati
-    a, b = os.path.join(RAW, "home_86.png"), os.path.join(RAW, "home_120.png")
+    # copertina: i due pannelli affiancati, in proporzione reale
+    a, b = os.path.join(RAW, "muro_stanza_86.png"), os.path.join(RAW, "muro_stanza_120.png")
     if os.path.exists(a) and os.path.exists(b):
         d86, d120 = panel86(Image.open(a), 10), panel120(Image.open(b), 10)
         gap, pad = 140, 120
@@ -127,10 +125,10 @@ def main():
             img.alpha_composite(dev, (x, y))
         d = ImageDraw.Draw(img)
         f = font(34, True)
-        t = "GDAHome OS"
+        t = "GdAHome OS · plancia a muro"
         d.text(((w - d.textlength(t, font=f)) / 2, h - 90), t, font=f, fill=(60, 64, 72))
-        out = os.path.join(OUT, "gdahome_panels.png")
-        img.convert("RGB").save(out, optimize=True); print("scritto", out)
+        out = os.path.join(OUT, "gdahome_os_pannelli.jpg")
+        img.convert("RGB").save(out, quality=88, optimize=True); print("scritto", out)
 
 if __name__ == "__main__":
     main()

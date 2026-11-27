@@ -17,5 +17,5 @@ fi
 for p in $PKGS; do A shell pm enable "$p" && echo "riattivata: $p"; done
 
 A shell settings put system screen_off_timeout 60000
-if [[ "${2:-}" == "--uninstall-gdahome" ]]; then A shell pm uninstall it.gdahome.panel || true; fi
+if [[ "${2:-}" == "--uninstall-gdahome" ]]; then A shell pm uninstall com.gdahome.os || true; fi
 echo "Riavvio del pannello…"; A reboot

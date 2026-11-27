@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "GDAHome"
+rootProject.name = "GdAHomeOS"
 include(":app")

@@ -1,98 +1,106 @@
-# GDAHome OS per Sonoff NSPanel Pro e NSPanel Pro 120
+<p align="center">
+  <img src="os/gda-marchio.png" alt="GdAHome" width="112">
+</p>
 
-GDAHome OS trasforma un NSPanel Pro (86, 4") o un NSPanel Pro 120 in un pannello GDAHome.
-**Tutto il software Sonoff/eWeLink viene rimosso dal sistema**: niente interfaccia Sonoff,
-niente cloud eWeLink, niente aggiornamenti Sonoff. Il pannello si avvia con l'animazione
-GDAHome e mostra soltanto GDAHome.
+<h1 align="center">GdAHome OS</h1>
 
-## Com'è fatto
+<p align="center">
+  <b>Il sistema dei pannelli a muro GdAHome.</b><br>
+  Un Sonoff NSPanel Pro diventa un pannello GdAHome e basta: niente Sonoff, niente eWeLink,<br>
+  niente app che non servono. Si accende col marchio GdAHome e apre la plancia a muro.
+</p>
+
+<p align="center">
+  <img src="docs/renders/gdahome_os_pannelli.jpg" alt="La plancia a muro di GdAHome su NSPanel Pro 86 (480×480) e NSPanel Pro 120 (750×1334)" width="100%">
+</p>
+<p align="center"><sub>La plancia a muro vera di GdAHome, alle risoluzioni dei due pannelli, in proporzione: NSPanel Pro 86 (3,95", 480×480) e NSPanel Pro 120 (4,7", 750×1334).</sub></p>
+
+---
+
+## Cosa c'è sul pannello
+
+GdAHome OS è pensato **solo per i pannelli a muro**. Sul pannello resta quello che serve
+e nient'altro, perché un PX30 con 2 GB di memoria vada veloce:
+
+| Pezzo | Cosa fa |
+| --- | --- |
+| **App GdAHome** (`com.gdahome.gdahome`) | L'interfaccia: la **plancia a muro** di GdAHome, abbinata all'add-on di casa. È l'app ufficiale, la stessa del telefono. |
+| **GdAHome OS** (`com.gdahome.os`) | Lo strato di sistema. È la schermata home: all'accensione apre GdAHome e la riapre se si chiude. Gestisce relè, Zigbee, sensori e MQTT. |
+| `gdaserial` | Il ponte del chip Zigbee integrato verso la rete, per Zigbee2MQTT e ZHA. |
+| Animazione d'avvio | Il marchio GdAHome, nello stile dell'avvio dell'app, per 480×480 e 750×1334. |
+| Android 8.1, alleggerito | Senza app Sonoff/eWeLink e senza le app inutili a muro: browser, galleria, musica, sfondi animati, stampa e altre. |
+
+Kernel e driver restano quelli originali (schermo, touch, Wi-Fi, GPIO): sono gli unici che
+conoscono l'hardware del pannello.
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│  GDAHome (app di sistema in /system/app)                 │
-│  schermata, Home Assistant, relè, sensori, MQTT, Zigbee  │
-├──────────────────────────────────────────────────────────┤
-│  gdaserial (/system/bin)  ponte Zigbee → rete            │
-│  bootanimation GDAHome, build.prop GDAHome OS            │
-├──────────────────────────────────────────────────────────┤
-│  Android 8.1 di base (AOSP), senza app Sonoff/eWeLink    │
-├──────────────────────────────────────────────────────────┤
-│  Kernel e driver originali: display, touch, Wi-Fi, GPIO  │
-└──────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────┐
+│  App GdAHome · plancia a muro                     │  ← l'interfaccia
+├───────────────────────────────────────────────────┤
+│  GdAHome OS · avvio, relè, Zigbee, sensori, MQTT  │  ← /system/app/GdAHomeOS
+│  gdaserial · animazione d'avvio GdAHome           │  ← /system/bin, /system/media
+├───────────────────────────────────────────────────┤
+│  Android 8.1 alleggerito, senza Sonoff            │
+├───────────────────────────────────────────────────┤
+│  Kernel e driver originali                        │
+└───────────────────────────────────────────────────┘
 ```
 
-Il kernel e i driver originali restano perché sono gli unici che conoscono l'hardware del
-pannello (schermo, touch, Wi-Fi, relè, chip Zigbee). Tutto quello che sta sopra è GDAHome.
+## Le schermate
 
-### Perché non un Linux scritto da zero?
+Sono le schermate vere della plancia a muro di GdAHome, fotografate con la casa delle prove
+a muro (`docs/fotografa-il-muro.mjs`).
 
-Un sistema operativo completamente nuovo, kernel compreso, ha bisogno del *device tree* e dei
-driver specifici del pannello: inizializzazione del display, controller touch, GPIO dei relè,
-alimentazione. Sonoff non li pubblica. Flashare un sistema senza averli renderebbe il pannello
-inutilizzabile. Il comando `backup` copia sul PC tutte le partizioni, comprese `boot` e `dtb`:
-è proprio il materiale da cui estrarre il device tree per un futuro **GDAHome OS Linux nativo**
-(vedi [Roadmap](#roadmap)).
+| | NSPanel Pro 86 | NSPanel Pro 120 |
+| --- | --- | --- |
+| L'avvio | <img src="docs/renders/muro_avvio_86.jpg" width="320"> | <img src="docs/renders/muro_avvio_120.jpg" width="230"> |
+| La stanza | <img src="docs/renders/muro_stanza_86.jpg" width="320"> | <img src="docs/renders/muro_stanza_120.jpg" width="230"> |
+| Le scene | <img src="docs/renders/muro_scene_86.jpg" width="320"> | <img src="docs/renders/muro_scene_120.jpg" width="230"> |
+| L'ingresso | <img src="docs/renders/muro_ingresso_86.jpg" width="320"> | <img src="docs/renders/muro_ingresso_120.jpg" width="230"> |
+| Il riposo | <img src="docs/renders/muro_riposo_86.jpg" width="320"> | <img src="docs/renders/muro_riposo_120.jpg" width="230"> |
 
-## Cosa fa GDAHome
+Il riposo, la luminosità, il sensore di prossimità e la notte li gestisce l'app GdAHome
+(canale `gdahomeSchermo`). GdAHome OS fa in modo che Android non spenga mai lo schermo da
+solo: su questo firmware, senza Sonoff, uno schermo spento non si riaccende più.
 
-| Funzione | Come |
-|---|---|
-| Schermata principale | Orologio, data, temperatura e riquadri dei dispositivi. Si adatta da sola al 4" e al 120 |
-| Home Assistant | Collegamento WebSocket in tempo reale. Gestisce luci (luminosità con pressione lunga), prese, tapparelle, termostati, scene, script, serrature e sensori |
-| Relè del pannello | Fino a 2 relè via GPIO/sysfs, dal pannello o da Home Assistant |
-| Zigbee integrato | Il chip Zigbee del pannello diventa un coordinatore di rete per Zigbee2MQTT/ZHA (`socket://IP:6638`) |
-| MQTT Discovery | Relè, schermo, presenza, temperatura e luce compaiono da soli in Home Assistant |
-| Salvaschermo | Orologio attenuato, poi nero. Si risveglia al tocco, alla prossimità o da HA |
-| Analisi hardware | Elenca GPIO, retroilluminazione, sensori, porte seriali e app Sonoff del pannello |
-| Protezione | Impostazioni protette da PIN (tieni premuto il logo) |
+## Cosa serve
 
-## Scaricare
+- I file della build: **Actions → GdAHome OS → ultima esecuzione → Artifacts → `GdAHome-OS`**.
+- **`GdAHome.apk`**, l'app GdAHome ufficiale per Android, da mettere nella stessa cartella.
+- Una **WebView recente** (108 o più). La plancia gira nella WebView di sistema e quella
+  originale del NSPanel è troppo vecchia. `check` dice quale c'è: se serve, metti
+  `webview.apk` nella cartella e l'installazione la aggiorna.
+- Un PC con [Android platform-tools](https://developer.android.com/tools/releases/platform-tools)
+  (`adb`) e bash: Linux, macOS, oppure Git Bash o WSL su Windows.
+- La casa con l'add-on GdAHome e una plancia **«A muro»** (Premium).
 
-Ogni push su questo repository compila tutto con GitHub Actions:
-**Actions → GDAHome OS → ultima esecuzione → Artifacts → `GDAHome-OS`**.
-
-Lo zip contiene:
-
-| File | Cosa è |
-|---|---|
-| `gdahome-os.sh` | lo strumento di installazione di GDAHome OS |
-| `GDAHome.apk` | l'interfaccia GDAHome |
-| `gdaserial-armeabi-v7a`, `gdaserial-arm64-v8a` | il ponte Zigbee nativo |
-| `bootanimation.zip` | l'animazione di avvio |
-| `install.sh`, `install.bat`, `restore.sh` | modalità leggera: solo app, senza modificare il sistema |
-
-## Installare GDAHome OS
-
-Ti servono un PC con [Android platform-tools](https://developer.android.com/tools/releases/platform-tools)
-(`adb`) e bash: Linux, macOS, oppure Git Bash o WSL su Windows. Ripeti la procedura per ogni pannello.
+## Installare
 
 ### 0. Abilitare ADB
 
 1. Associa il pannello all'app eWeLink, se non l'hai già fatto.
-2. Nell'app eWeLink apri la pagina del pannello e **tocca più volte l'ID dispositivo** finché
-   si attiva la modalità sviluppatore. Poi attiva ADB.
-3. ⚠️ Sonoff avvisa che accettare l'accordo ADB è **irreversibile** e che il pannello non
-   riceverà più aggiornamenti ufficiali.
-4. Annota l'IP del pannello (dal router o dall'app eWeLink).
+2. Nell'app eWeLink apri la pagina del pannello e **tocca più volte l'ID dispositivo** finché si
+   attiva la modalità sviluppatore. Poi attiva ADB.
+3. ⚠️ Sonoff avvisa che l'accordo ADB è **irreversibile**: il pannello non riceverà più
+   aggiornamenti Sonoff.
+4. Annota l'IP del pannello.
 
 ### 1. Verifica
 
 ```bash
-chmod +x gdahome-os.sh
 ./gdahome-os.sh check 192.168.1.50
 ```
 
-Il comando controlla:
-- l'accesso root;
-- che `/system` sia modificabile (dm-verity);
-- le partizioni del pannello.
+Il comando riconosce il modello (86 o 120) e controlla:
+- root e dm-verity;
+- memoria;
+- versione della WebView;
+- presenza di `GdAHome.apk`.
 
-Prepara anche l'elenco delle app da rimuovere in
-`gdahome-os-data/<modello>-<seriale>/packages-to-remove.txt`:
-- le app Sonoff/eWeLink e il launcher Sonoff sono già selezionate;
-- le app non riconosciute sono segnate con `#` perché tu le verifichi.
-
-Aprilo e controllalo.
+Prepara anche l'elenco di cosa togliere in
+`gdahome-os-data/<modello>-<seriale>/packages-to-remove.txt`. Le app Sonoff e quelle superflue
+sono già selezionate; le altre sono segnate con `#` perché tu le verifichi. I componenti di base
+di Android sono protetti: se finiscono nell'elenco, l'installazione si ferma.
 
 ### 2. Backup (obbligatorio)
 
@@ -100,10 +108,9 @@ Aprilo e controllalo.
 ./gdahome-os.sh backup 192.168.1.50
 ```
 
-Copia **ogni partizione** del pannello sul PC e la verifica con il checksum MD5. Restano
-escluse `userdata` e `cache`: aggiungi `--with-userdata` per includerle.
-Senza un backup valido l'installazione non parte. **Conservalo**: è l'unico modo per tornare
-al firmware originale.
+Copia **tutte le partizioni** sul PC e le verifica con MD5. Restano escluse `userdata` e `cache`:
+aggiungi `--with-userdata` per includerle. Senza un backup valido l'installazione non parte.
+**Conservalo.**
 
 ### 3. Installazione
 
@@ -111,130 +118,110 @@ al firmware originale.
 ./gdahome-os.sh install 192.168.1.50
 ```
 
-Mostra cosa verrà rimosso e chiede di scrivere `GDAHOME` per confermare. Poi:
+Chiede di scrivere `GDAHOME` per confermare, poi:
 
-1. sposta le app Sonoff fuori dal sistema, in `/system/gdahome-removed`. Non vengono più
-   caricate, ma si possono ripristinare;
-2. installa GDAHome come app di sistema, `gdaserial` in `/system/bin` e l'animazione di avvio;
-3. tiene **sempre attivo ADB sulla porta 5555**, perché senza le app Sonoff nessuno lo
-   riattiverebbe;
-4. nasconde le barre di sistema e affida lo schermo a GDAHome;
-5. riavvia il pannello in GDAHome OS.
+1. installa la WebView, se serve, e l'**app GdAHome** con i permessi per il pannello: microfono
+   per il citofono, nessun limite di batteria;
+2. sposta le app Sonoff e quelle superflue fuori dal sistema, in `/system/gdahome-removed`.
+   Si possono rimettere;
+3. installa **GdAHome OS** come app di sistema, il ponte Zigbee e l'animazione d'avvio del modello;
+4. imposta il sistema da pannello a muro:
+   - schermo mai spento da Android;
+   - barre nascoste e niente salvaschermo di Android;
+   - animazioni dimezzate;
+   - niente ricerche Wi-Fi o Bluetooth in sottofondo e niente posizione;
+   - Wi-Fi sempre acceso;
+5. tiene **ADB attivo sulla porta 5555**: senza Sonoff nessuno lo riattiverebbe;
+6. riavvia in GdAHome OS.
 
-### 4. Configurare
+Se la WebView è vecchia e manca `webview.apk`, si ferma **prima** di toccare il sistema.
 
-Tieni premuto il logo in alto a sinistra e inserisci il PIN (predefinito **1234**, cambialo subito).
+### 4. Primo avvio
 
-- **Home Assistant**: indirizzo (es. `http://192.168.1.10:8123`) e un token a lunga durata
-  (Profilo → Sicurezza). Entità: una per riga, con un nome facoltativo:
-  ```
-  light.soggiorno|Soggiorno
-  switch.presa_tv
-  cover.tapparella_cucina|Tapparella
-  climate.termostato
-  scene.buonanotte|Buonanotte
-  ```
-- **MQTT**: broker (es. il componente Mosquitto di HA). Il pannello compare in HA come
-  dispositivo "GDAHome".
-- **Relè, Zigbee, retroilluminazione**: vedi [Analisi hardware](#analisi-hardware).
+Sul pannello si apre GdAHome:
 
-### Tornare a Sonoff
+1. **abbina** il pannello alla casa con il codice dell'add-on GdAHome;
+2. apri **Configurazione → Configura Entità → scheda «A muro»** e accendi «Usa questa plancia a
+   muro» (vedi il [manuale di GdAHome](https://github.com/danigio15/gdahomeapp/blob/main/docs/MANUALE.md), capitolo 8.3).
+
+### Aggiornare e tornare indietro
 
 ```bash
-./gdahome-os.sh restore 192.168.1.50
+./gdahome-os.sh aggiorna 192.168.1.50   # nuova GdAHome.apk e/o GdAHome-OS.apk
+./gdahome-os.sh restore  192.168.1.50   # rimette Sonoff (--togli-gdahome toglie anche l'app)
 ```
 
-Rimette le app Sonoff, l'animazione e il `build.prop` originali, rimuove GDAHome dal sistema
-e riavvia.
+**Emergenza**: `./gdahome-os.sh flash 192.168.1.50 system <backup>/system.img` riscrive una
+partizione dal backup. Se il pannello non si avvia e ADB non risponde, le immagini del backup si
+riscrivono in modalità Rockchip loader con `rkdeveloptool`, con l'accesso USB alla scheda.
 
-**Emergenza**: `./gdahome-os.sh flash 192.168.1.50 system gdahome-os-data/.../backup-.../system.img`
-riscrive una partizione dal backup. Se il pannello non si avvia più e ADB non risponde, le
-immagini del backup si possono riscrivere in modalità Rockchip loader con `rkdeveloptool`.
-Serve però l'accesso USB alla scheda.
+## Le impostazioni del pannello
 
-## Analisi hardware
+Nella schermata d'avvio **tieni premuto il marchio** e inserisci il PIN (predefinito **1234**,
+cambialo). Si arriva lì quando GdAHome è chiusa: dopo un tocco l'avvio si ferma e mostra
+«Apri GdAHome» e «Impostazioni».
 
-Sonoff non documenta i percorsi hardware, che possono cambiare tra NSPanel Pro, Pro 120 e
-versioni del firmware. GDAHome non li indovina: li trovi con lo strumento incluso.
+- **MQTT**: il broker di casa (es. Mosquitto in Home Assistant). Il pannello compare in Home
+  Assistant come dispositivo **GdAHome OS** con:
+  - i relè;
+  - la presenza (prossimità);
+  - la temperatura e la luce ambiente;
+  - i tasti «Riapri GdAHome», «Riavvia pannello» e «Analisi hardware».
 
-1. Impostazioni → **Analisi hardware**. Il rapporto viene salvato in
-   `/sdcard/Android/data/it.gdahome.panel/files/gdahome_probe.txt` e pubblicato su MQTT in
-   `gdahome/<id>/probe`. Per scaricarlo:
-   `adb pull /sdcard/Android/data/it.gdahome.panel/files/gdahome_probe.txt`
-2. **Relè**: cerca i GPIO configurati come `out` e provali uno alla volta, ascoltando il clic:
-   ```bash
-   adb shell su -c 'echo 1 > /sys/class/gpio/gpioNN/value'
-   adb shell su -c 'echo 0 > /sys/class/gpio/gpioNN/value'
-   ```
-   Poi inserisci il numero in Impostazioni → Relè 1 / Relè 2.
-3. **Zigbee**: tra le porte seriali (`/dev/ttyS*`) c'è quella del chip Zigbee. Inseriscila in
-   Impostazioni → Zigbee integrato, attiva "Esponi Zigbee in rete" e configura Zigbee2MQTT:
-   ```yaml
-   serial:
-     port: tcp://192.168.1.50:6638
-     adapter: ember   # chip Silicon Labs
-   ```
-   In ZHA scegli "inserimento manuale" con `socket://192.168.1.50:6638`. Velocità e controllo
-   di flusso dipendono dal firmware del chip (di solito 115200).
-4. **Retroilluminazione / temperatura**: `/sys/class/backlight/...`,
-   `/sys/class/thermal/...`, `/sys/bus/iio/...` o `/sys/class/hwmon/...`.
+  Da lì li metti nella plancia a muro come ogni altra entità.
+- **Relè**: numero GPIO o percorso sysfs. Si trovano con l'Analisi hardware.
+- **Zigbee integrato**: la porta seriale del chip. Zigbee2MQTT lo usa come
+  `tcp://IP-pannello:6638` (`adapter: ember`), ZHA come `socket://IP-pannello:6638`.
+- **Analisi hardware**: elenca GPIO, retroilluminazione, sensori, porte seriali, versione di
+  GdAHome e della WebView, memoria. Il rapporto va anche su MQTT in `gdahome/<id>/probe`.
 
-## Modalità leggera (senza modificare il sistema)
+### Trovare i relè
 
-Per provare GDAHome prima di installare l'OS, si può installare soltanto l'app:
+Sonoff non documenta i GPIO dei relè. Dall'Analisi hardware prendi i GPIO `out` e provali uno
+alla volta, ascoltando il clic:
 
 ```bash
-./install.sh 192.168.1.50 GDAHome.apk                   # app + launcher, Sonoff resta
-./install.sh 192.168.1.50 GDAHome.apk --disable-sonoff  # disattiva (non rimuove) le app Sonoff
-./restore.sh 192.168.1.50                               # annulla
+adb shell su -c 'echo 1 > /sys/class/gpio/gpioNN/value'
+adb shell su -c 'echo 0 > /sys/class/gpio/gpioNN/value'
 ```
 
 ## Topic MQTT
 
 | Topic | Payload |
-|---|---|
+| --- | --- |
 | `gdahome/<id>/relay1/set`, `relay2/set` | `ON` / `OFF` |
-| `gdahome/<id>/screen/set` | `ON` (risveglia) / `OFF` (schermo nero) |
-| `gdahome/<id>/command` | `reload`, `probe` |
-| `gdahome/<id>/probe` | rapporto dell'analisi hardware (in uscita) |
+| `gdahome/<id>/command` | `riapri_app`, `riavvia`, `probe` |
+| `gdahome/<id>/proximity/state`, `temperature/state`, `illuminance/state` | in uscita |
+| `gdahome/<id>/probe` | rapporto dell'analisi hardware |
 | `gdahome/<id>/status` | `online` / `offline` |
 
-## Note importanti
+## Da sapere
 
-- **Lo schermo non viene mai spento da Android**: su questo firmware, senza l'app Sonoff, uno
-  schermo spento non si riaccende. GDAHome simula lo spegnimento con schermo nero e
-  luminosità minima.
-- **ADB resta aperto in rete** (porta 5555, con root): chiunque sia sulla tua rete locale può
-  collegarsi al pannello. Tieni i pannelli su una rete fidata o su una VLAN separata.
-- Prima di rimuovere le app Sonoff, controlla con l'Analisi hardware che relè e Zigbee
-  funzionino da GDAHome.
-- GDAHome OS è stato provato in simulazione, non ancora su un pannello reale: segui i passi
-  in ordine e non saltare il backup.
-
-## Roadmap
-
-1. ✅ GDAHome OS su base Android: rimozione Sonoff, app di sistema, Zigbee, boot animation.
-2. ⏳ Profili hardware pronti per NSPanel Pro 86 e Pro 120, ricavati dai rapporti di Analisi
-   hardware: relè, retroilluminazione e Zigbee configurati in automatico.
-3. 🔭 GDAHome OS Linux nativo: kernel e device tree estratti dal backup (`boot.img`/`dtb`),
-   sistema minimo Buildroot e interfaccia GDAHome nativa, flash via `rkdeveloptool`.
+- **ADB resta aperto in rete** (porta 5555, con root): tieni i pannelli su una rete fidata o in
+  una VLAN separata.
+- **Le notifiche push** dell'app GdAHome usano Firebase, che senza i servizi Google non parte:
+  sul pannello non servono, e la plancia funziona lo stesso.
+- GdAHome OS è stato provato **in simulazione** (installazione, protezioni e ripristino) e le
+  schermate sono quelle vere della plancia. Non è ancora stato provato su un NSPanel reale:
+  segui i passi in ordine e non saltare il backup.
 
 ## Sviluppo
 
 ```
 gdahome-nspanel/
-├── app/       interfaccia GDAHome (Kotlin, Android 8.1+)
-│   └── src/main/java/it/gdahome/panel/
-│       ├── PanelHub.kt     stato centrale: relè, sensori, HA, MQTT, Zigbee
-│       ├── GdaService.kt   servizio in primo piano
-│       ├── ha/             client WebSocket Home Assistant
-│       ├── mqtt/           ponte MQTT + Discovery
-│       ├── hw/             GPIO/sysfs, retroilluminazione, sensori, ponte Zigbee
-│       └── ui/             launcher, riquadri, impostazioni, analisi hardware
-├── native/    gdaserial.c  ponte UART ↔ TCP (C, NDK)
-├── os/        gdahome-os.sh, generatore dell'animazione di avvio
-└── tools/     installazione leggera via ADB
+├── app/       GdAHome OS (Kotlin, Android 8.1+): avvio, servizio, relè, Zigbee, sensori, MQTT
+├── native/    gdaserial.c: ponte UART ↔ TCP per il chip Zigbee (C, NDK)
+├── os/        gdahome-os.sh, il marchio, l'animazione d'avvio (make_bootanimation.py)
+├── tools/     installazione leggera via ADB, senza toccare il sistema
+└── docs/      i render della plancia a muro (fotografa-il-muro.mjs, make_mockups.py)
 ```
 
-L'APK viene firmato con `keystore/gdahome-sideload.jks` per poterlo aggiornare senza
-disinstallarlo. È una chiave pubblica per uso personale: per distribuire l'app crea la tua.
+I render si rifanno con il repository `gdahomeapp` accanto:
+
+```bash
+(cd ../gdahomeapp/officina && npm ci)
+node docs/fotografa-il-muro.mjs ../gdahomeapp && python3 docs/make_mockups.py
+```
+
+GdAHome OS è firmato con `keystore/gdahome-sideload.jks`, così si aggiorna senza disinstallarlo.
+È una chiave pubblica, per uso personale.

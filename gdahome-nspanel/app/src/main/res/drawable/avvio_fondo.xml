@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Il fondo dell'avvio: blu notte con il bagliore blu al centro, come nell'app -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape><gradient android:angle="270" android:startColor="@color/gda_fondo_alto" android:centerColor="@color/gda_fondo" android:endColor="#03080F" /></shape>
+    </item>
+    <item>
+        <shape>
+            <gradient android:type="radial" android:gradientRadius="60%p"
+                android:centerX="0.5" android:centerY="0.42"
+                android:startColor="#3316307A" android:endColor="#000B1220" />
+        </shape>
+    </item>
+</layer-list>
