@@ -41,6 +41,7 @@ const SCATTI = [
   ["nuovo-1b-rete", "premium", "nuovo-pannello", async (p) => {
     await p.click("#cerca-in-rete");
   }],
+  ["nuovo-attesa", "attesa", "nuovo-pannello", async (p) => { await p.waitForTimeout(600); }],
   ["nuovo-2-verificato", "premium", "nuovo-pannello", async (p) => {
     await p.fill("#indirizzo-pannello", "192.168.1.53");
     await p.click("#cerca-pannello");

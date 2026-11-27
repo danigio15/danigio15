@@ -83,6 +83,7 @@ export function risposte(via, metodo) {
       return { pannelli, premium, adb: true };
     }
     case "api/pannelli/rete":
+      if (SCENARIO() === "attesa") return { trovati: [{ indirizzo: "192.168.1.51", modello: "86", gia: true }] };
       return { trovati: [
         { indirizzo: "192.168.1.53", modello: "86" },
         { indirizzo: "192.168.1.57", modello: "120" },
