@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 /** Le impostazioni di GdAHome OS. L'interfaccia e le sue impostazioni stanno nell'app GdAHome. */
 class Config(context: Context) {
     val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val pm = context.packageManager
 
     private fun str(key: String, def: String = "") = prefs.getString(key, def)?.trim() ?: def
     private fun int(key: String, def: Int) = str(key, def.toString()).toIntOrNull() ?: def
@@ -15,8 +16,28 @@ class Config(context: Context) {
     // Generale
     val panelName get() = str("panel_name", "Pannello GdAHome").ifEmpty { "Pannello GdAHome" }
     val pin get() = str("pin", "1234")
-    /** L'app che fa da interfaccia: quella ufficiale di GdAHome. */
-    val gdaPackage get() = str("gda_package", GDA_APP).ifEmpty { GDA_APP }
+    /**
+     * L'app che fa da interfaccia. Se nelle impostazioni ne e' scelta una, quella.
+     * Altrimenti GdAHome Muro (`com.gdahome.muro`), che e' quella che l'add-on
+     * installa e abbina da solo, e in mancanza l'app GdAHome ufficiale.
+     *
+     * Prima qui c'era solo l'app ufficiale: l'add-on installava GdAHome Muro e il
+     * pannello, all'accensione, diceva «GdAHome non e' installata».
+     */
+    val gdaPackage: String
+        get() {
+            val scelta = str("gda_package")
+            if (scelta.isNotEmpty()) return scelta
+            return GDA_APPS.firstOrNull { installata(it) } ?: GDA_MURO
+        }
+
+    private fun installata(pkg: String) =
+        try {
+            pm.getPackageInfo(pkg, 0)
+            true
+        } catch (_: Exception) {
+            false
+        }
     /** Riapre GdAHome se si chiude (secondi di attesa, 0 = mai). */
     val riapriDopo get() = int("riapri_dopo", 3)
 
@@ -55,7 +76,11 @@ class Config(context: Context) {
     val tempOffset get() = str("temp_offset", "0").toDoubleOrNull() ?: 0.0
 
     companion object {
+        /** L'app del pannello a muro, quella che installa l'add-on. */
+        const val GDA_MURO = "com.gdahome.muro"
+        /** L'app GdAHome ufficiale, la stessa del telefono. */
         const val GDA_APP = "com.gdahome.gdahome"
+        val GDA_APPS = listOf(GDA_MURO, GDA_APP)
     }
 }
 
