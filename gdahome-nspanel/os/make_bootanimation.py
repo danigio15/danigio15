@@ -24,7 +24,8 @@ MODELLI = {
 }
 
 def font(size):
-    for n in ("DejaVuSans-Bold.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"):
+    # Inter, il carattere dell'app GdAHome (licenza SIL OFL, OFL-Inter.txt).
+    for n in (os.path.join(QUI, "Inter-800.ttf"), "DejaVuSans-Bold.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"):
         try: return ImageFont.truetype(n, size)
         except OSError: pass
     return ImageFont.load_default()
@@ -69,7 +70,8 @@ def anello(W, H, cx, cy, r, inizio, lunghezza, alfa):
 def scritte(img, W, cy_testo, alfa, sz):
     d = ImageDraw.Draw(img)
     f = font(sz)
-    testo = "G D A H O M E"
+    # Il nome si scrive GdAHome: con le sue maiuscole, non tutto maiuscolo.
+    testo = "GdAHome"
     w = d.textlength(testo, font=f)
     col = tuple(int(FONDO[i] + (NOME[i] - FONDO[i]) * alfa) for i in range(3))
     d.text(((W - w) / 2, cy_testo), testo, font=f, fill=col)
@@ -101,7 +103,7 @@ def fotogramma(W, H, fase, t):
         base.alpha_composite(anello(W, H, cx, cy, r, -90, 360 * e, 0.9 * e))
     else:
         base.alpha_composite(anello(W, H, cx, cy, r, -90 + 360 * t, 300, 0.9))
-    scritte(base, W, cy + int(lato * 0.95), alfa, max(14, int(min(W, H) * 0.036)))
+    scritte(base, W, cy + int(lato * 0.95), alfa, max(16, int(min(W, H) * 0.05)))
     buf = io.BytesIO()
     base.convert("RGB").save(buf, "PNG", optimize=True)
     return buf.getvalue()
